@@ -34,4 +34,14 @@ public class TestController {
         return "success";
     }
 
+    /**
+     * @Description: 测试分支版本
+     * @Author: Ray
+     * @Date: 2021/4/23 17:36
+     **/
+    @RequestMapping("/testVersion")
+    public String testVersion(){
+        return "success";
+    }
+
 }
