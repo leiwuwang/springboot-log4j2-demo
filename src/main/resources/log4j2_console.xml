@@ -1,0 +1,187 @@
+
+<!--
+  记录一些我所了解的控制台日志输出节点和属性
+
+  status="WARN"  应该记录到控制台的【内部Log4j】事件的级别。
+  Log4j会将有关初始化，过渡和其他内部操作的详细信息记录到状态记录器中。
+  如果需要对log4j进行故障排除，设置status = "trace"
+
+  monitorInterval="30" 在检查文件配置是否更改之前必须经过的最短时间（以秒为单位）。
+  官网上面写了这项，但我没有测试
+  最小值为5
+-->
+<Configuration status="WARN" monitorInterval="30">
+
+    <!--
+        Appenders 定义日志输出目的地或终点
+             name 节点的名字，在AppenderRef进行引用
+             target 默认是SYSTEM_OUT  还有一种 SYSTEM_ERR，
+                    我只在控制台发现SYSTEM_ERR输出是红色字体，其他区别未了解
+             PatternLayout 日志输出的格式
+                   %d{yyyy-MM-dd 'at' HH:mm:ss}   日期格式，跟SimpleDateFormat 的pattern类似
+                        yyyy 年
+                        MM 月
+                        dd 日
+                        HH 时
+                        mm 分
+                        ss 秒
+                    %t   线程名
+                    %-5level 日志的级别
+                    %l 输出日志发生的位置，对应的类和方法 (另：%L 只输出对应的行)
+                    %logger 输出日志记录的名称，一般用类全名 {n}里面表示输出名称只个节点，正负数均可，只是负数是从左边开始截掉n个，正数是从右边开始截取n个
+                    %msg  输出日志的内容
+                    %n 换行
+    -->
+    <Appenders>
+        <!--
+        输出日期 %d{yyyy-MM-dd 'at' HH:mm:ss
+        2021-04-23 at 10:42:40
+        -->
+        <Console name="console1" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} %n"></PatternLayout>
+        </Console>
+
+        <!--输出红色字体 SYSTEM_ERR
+        内容不变，只是控制台日志颜色改变
+        2021-04-23 at 10:43:31
+        -->
+        <Console name="console2" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} %n"></PatternLayout>
+        </Console>
+
+        <!--
+        打印线程  %t
+        2021-04-23 at 10:46:29 [http-nio-8080-exec-1]
+        -->
+        <Console name="console3" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %n"></PatternLayout>
+        </Console>
+
+        <!--
+        打印日志级别 %-5level
+        2021-04-23 at 10:47:23 [http-nio-8080-exec-1] INFO
+        -->
+        <Console name="console4" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %n"></PatternLayout>
+        </Console>
+
+        <!--
+        不输出全名，方法，行号 %l
+        2021-04-23 at 10:49:23 [http-nio-8080-exec-3] INFO  com.test.controller.TestController.logTest(TestController.java:29)
+        -->
+        <Console name="console5" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %n"></PatternLayout>
+        </Console>
+
+        <!--
+        只输出行号 %L
+        2021-04-23 at 10:50:49 [http-nio-8080-exec-1] INFO  29
+        -->
+        <Console name="console6" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %L %n"></PatternLayout>
+        </Console>
+
+        <!--
+        输出日志的名称 %logger
+        2021-04-23 at 10:54:24 [http-nio-8080-exec-1] INFO  com.test.controller.TestController.logTest(TestController.java:29) com.test.controller.TestController
+        -->
+        <Console name="console7" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %logger %n"></PatternLayout>
+        </Console>
+
+        <!--
+        只输出日志名称右边截取两个节点  %logger{2}
+        2021-04-23 at 10:57:19 [http-nio-8080-exec-1] INFO  com.test.controller.TestController.logTest(TestController.java:29) controller.TestController
+        -->
+        <Console name="console8" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %logger{2} %n"></PatternLayout>
+        </Console>
+
+        <!--
+        只输出日志名称左边截掉一个节点  %logger{-1}
+        2021-04-23 at 11:04:36 [http-nio-8080-exec-1] INFO  com.test.controller.TestController.logTest(TestController.java:29) test.controller.TestController
+        -->
+        <Console name="console9" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %logger{-1} %n"></PatternLayout>
+        </Console>
+
+        <!--
+        输出日志信息  %msg
+        2021-04-23 at 11:06:59 [http-nio-8080-exec-1] INFO  com.test.controller.TestController.logTest(TestController.java:29) com.test.controller.TestController info msg
+        -->
+        <Console name="console10" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %logger{36} %msg%n"></PatternLayout>
+        </Console>
+
+        <!--
+        去掉target="SYSTEM_OUT"，输出结果无变化
+        2021-04-23 at 11:17:04 [http-nio-8080-exec-1] INFO  com.test.controller.TestController.logTest(TestController.java:30) com.test.controller.TestController info msg
+        -->
+        <Console name="console11">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %logger{36} %msg%n"></PatternLayout>
+        </Console>
+
+        <!--
+        自定义单独日志
+        -->
+        <Console name="console12">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} %l '这是自定义单独的日志：' - %msg%n"></PatternLayout>
+        </Console>
+
+    </Appenders>
+    <Loggers>
+        <!--
+            Root 根节点，默认日志配置，只能配置一个根节点
+                level 记录日志的级别
+                AppenderRef 引入Appenders里面的节点
+        -->
+        <Root level="info">
+            <!--<AppenderRef ref="console1"></AppenderRef>-->
+            <!--<AppenderRef ref="console2"></AppenderRef>-->
+            <!--<AppenderRef ref="console3"></AppenderRef>-->
+            <!--<AppenderRef ref="console4"></AppenderRef>-->
+            <!--<AppenderRef ref="console5"></AppenderRef>-->
+            <!--<AppenderRef ref="console6"></AppenderRef>-->
+            <!--<AppenderRef ref="console7"></AppenderRef>-->
+            <!--<AppenderRef ref="console8"></AppenderRef>-->
+            <!--<AppenderRef ref="console9"></AppenderRef>-->
+            <!--<AppenderRef ref="console10"></AppenderRef>-->
+            <AppenderRef ref="console11"></AppenderRef>
+        </Root>
+
+        <!--
+            Logger 日志记录节点
+                name 日志记录的路径
+                additivity 是否将日志向父级反馈
+
+
+        设置 com.test.controller.TestController2  additivity="true"
+
+        浏览器地址栏输入访问：http://localhost:8080/test2
+
+        控制台输出：
+        2021-04-23 at 11:47:34 com.test.controller.TestController2.logTest2(TestController2.java:19) '这是自定义单独的日志：' - info msg test2
+        2021-04-23 at 11:47:34 com.test.controller.TestController2.logTest2(TestController2.java:19) '这是自定义单独的日志：' - info msg test2
+        2021-04-23 at 11:47:34 [http-nio-8080-exec-1] INFO  com.test.controller.TestController2.logTest2(TestController2.java:19) com.test.controller.TestController2 info msg test2
+
+        为什么会有三条？？？
+        ***因为com.test.controller.TestController2  的父级com.test配置了Logger，
+        而com.test引入的也是console12日志，所以会打印出相同的日志
+        而com.test的 additivity="true"，他也会继续向上冒泡，找到Root，故会打印出第三条日志，
+        反推，如果com.test的additivity="false"，就不会向上查找了，所以只会打印前两条日志
+        ================================================================================
+
+        设置 com.test.controller.TestController2 additivity="false"
+        2021-04-23 at 11:42:22 com.test.controller.TestController2.logTest2(TestController2.java:19) '这是自定义单独的日志：' - info msg test2
+        这里就只打印一条日志，不会向上冒泡
+        -->
+        <Logger name="com.test.controller.TestController2" additivity="true">
+            <AppenderRef ref="console12"></AppenderRef>
+        </Logger>
+
+        <Logger name="com.test" additivity="true">
+            <AppenderRef ref="console12"></AppenderRef>
+        </Logger>
+
+    </Loggers>
+</Configuration>

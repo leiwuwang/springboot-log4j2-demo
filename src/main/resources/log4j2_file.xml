@@ -1,0 +1,49 @@
+<!--
+RollingRandomAccessFile文件日志配置
+-->
+<Configuration status="WARN" monitorInterval="30">
+
+    <!--定义变量属性-->
+    <Properties>
+        <!--
+        我使用的是IDEA工具开发，测试时发现logs文件夹有时并没有生成到项目的根目录中，原因不明
+        我是直接找到jar运行，然后查看结果
+        -->
+        <Property name="fileName">logs</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!--
+            RollingRandomAccessFile
+                name 名称
+                fileName 日志写入目录和文件名目的地
+                filePattern 日志归档格式
+        -->
+        <RollingRandomAccessFile name="file1" fileName="${fileName}/app.log"
+                                 filePattern="${fileName}/$${date:yyyy-MM}/app-%d{yyyy-MM-dd}-%i.log.gz">
+
+            <!--日志输出格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss} [%t] %-5level %l %logger{36} %msg%n"></PatternLayout>
+            <Policies>
+                <!--
+                日志文件归档时间间隔
+                interval 的单位是根据 filePattern 里面的日期来计算的，此处日期为%d{yyyy-MM-dd}，则按天数进行拆分
+                -->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--日志文件超过size后会归档-->
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+
+            <!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
+            <DefaultRolloverStrategy max="20"/>
+
+        </RollingRandomAccessFile>
+
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="file1"></AppenderRef>
+        </Root>
+    </Loggers>
+</Configuration>
